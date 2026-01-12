@@ -1,414 +1,485 @@
 <!DOCTYPE html>
-<html lang="ms-MY">
+<html lang="ms-MY" class="overflow-hidden overscroll-none">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nombor Hingga 100</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Nombor Hingga 100</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <style>
-    /* --- UI STYLE (MASTER REFERENCE - TEMA HIJAU) --- */
-    body { 
-        font-family: 'Fredoka', sans-serif; 
-        background-color: #f0fdf4; 
-        background-image: radial-gradient(#86efac 2px, transparent 2px); 
-        background-size: 30px 30px; 
-    }
-    
-    .game-card { 
-        background: white; 
-        border: 4px solid #475569; 
-        box-shadow: 8px 8px 0px #00000020; 
-        border-radius: 1.5rem; 
-        min-height: 600px; 
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        overflow: hidden; 
-    }
-    
-    /* Buttons */
-    .btn-3d { 
-        transition: all 0.1s; 
-        border-bottom-width: 6px; 
-        border-color: rgba(0,0,0,0.2); 
-        transform: translateY(0); 
-        cursor: pointer; 
-        display: inline-block; 
-    }
-    .btn-3d:active:not(:disabled) { transform: translateY(4px); border-bottom-width: 2px; box-shadow: none; }
-    .btn-3d:disabled { opacity: 0.6; cursor: not-allowed; border-bottom-width: 6px; filter: grayscale(100%); }
+    <style>
+        /* --- UI STYLE (MASTER REFERENCE - TEMA HIJAU) --- */
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #f0fdf4;
+            background-image: radial-gradient(#86efac 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
 
-    /* Activity Specific */
-    .grid-100 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; width: 100%; max-width: 500px; margin: 0 auto; }
-    .cell-100 { 
-        aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
-        border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem; font-weight: bold; 
-        cursor: pointer; transition: all 0.1s; bg-white;
-    }
-    .cell-100:hover { background-color: #e0f2fe; transform: scale(1.1); z-index: 10; }
-    .cell-100.selected { background-color: #3b82f6; color: white; border-color: #1d4ed8; }
-    .cell-100.correct { background-color: #22c55e; color: white; border-color: #15803d; }
-    
-    .chip { cursor: pointer; transition: all 0.2s; }
-    .chip:hover { transform: scale(1.05); }
-    .chip.selected { transform: scale(1.1); box-shadow: 0 0 0 4px #fbbf24; }
-    
-    /* Toggle Switch */
-    .toggle-checkbox:checked { right: 0; border-color: #68D391; }
-    .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
-  </style>
+        .game-card {
+            background: white;
+            border: 4px solid #475569;
+            box-shadow: 8px 8px 0px #00000020;
+            border-radius: 1.5rem;
+            /* min-height: 600px; REMOVED */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Buttons */
+        .btn-3d {
+            transition: all 0.1s;
+            border-bottom-width: 6px;
+            border-color: rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+            box-shadow: none;
+        }
+
+        .btn-3d:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-bottom-width: 6px;
+            filter: grayscale(100%);
+        }
+
+        /* Activity Specific */
+        .grid-100 {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .cell-100 {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            background-color: white;
+        }
+
+        .cell-100:hover {
+            background-color: #e0f2fe;
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .cell-100.selected {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #1d4ed8;
+        }
+
+        .cell-100.correct {
+            background-color: #22c55e;
+            color: white;
+            border-color: #15803d;
+        }
+
+        .chip {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            transform: scale(1.05);
+        }
+
+        .chip.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px #fbbf24;
+        }
+
+        /* Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #68D391;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #68D391;
+        }
+    </style>
 </head>
-<body class="min-h-screen text-slate-800 pb-10">
 
-  <div class="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
-    <div class="max-w-4xl mx-auto bg-green-400 border-4 border-green-600 rounded-full px-6 py-3 shadow-xl flex items-center justify-between pointer-events-auto transform hover:scale-[1.01] transition-transform">
-      <div class="flex items-center gap-3">
-        <span class="text-3xl animate-bounce">🔢</span>
-        <span id="info-text" class="text-xl font-bold text-green-900 leading-none mt-1">Nombor Hingga 100</span>
-      </div>
-      <button id="speak-btn" onclick="speakInfo()" class="bg-white hover:bg-green-50 text-green-600 border-2 border-green-200 rounded-full p-2 transition-colors shadow-sm">🔊</button>
+<body class="h-screen w-screen overflow-hidden text-slate-800 flex flex-col overscroll-none">
+
+    <div class="flex-none p-4 z-50 pointer-events-none w-full">
+        <div
+            class="max-w-4xl mx-auto bg-green-400 border-4 border-green-600 rounded-full px-4 py-2 shadow-xl flex items-center justify-between pointer-events-auto transform hover:scale-[1.01] transition-transform">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl animate-bounce">🔢</span>
+                <span id="info-text" class="text-lg font-bold text-green-900 leading-none mt-1">Nombor Hingga 100</span>
+            </div>
+            <button id="speak-btn" onclick="speakInfo()"
+                class="bg-white hover:bg-green-50 text-green-600 border-2 border-green-200 rounded-full p-2 transition-colors shadow-sm">🔊</button>
+        </div>
     </div>
-  </div>
-  <div class="h-24"></div>
 
-  <div class="max-w-6xl mx-auto p-4">
-    
-    <div class="game-card p-8 mb-8">
-        <div id="activity-content" class="w-full relative z-10 flex flex-col items-center justify-center h-full transition-opacity duration-200">
-            <div class="py-10 text-center">
-                <div class="text-8xl mb-6 animate-pulse">💯</div>
-                <h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 1-100</h2>
-                <p class="text-2xl text-slate-500 mb-8 font-semibold">Kenali nombor, kira dan padan.</p>
-                <div class="text-4xl animate-bounce">👇</div>
+    <div class="flex-1 w-full max-w-6xl mx-auto p-2 flex flex-col min-h-0">
+
+        <div class="game-card p-4 mb-2 flex-1 w-full">
+            <div id="activity-content"
+                class="w-full relative z-10 flex flex-col items-center justify-center h-full transition-opacity duration-200">
+                <div class="py-10 text-center">
+                    <div class="text-8xl mb-6 animate-pulse">💯</div>
+                    <h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 1-100</h2>
+                    <p class="text-xl text-slate-500 mb-8 font-semibold">Kenali nombor, kira dan padan.</p>
+                    <div class="text-4xl animate-bounce">👇</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-none bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-2 border-2 border-white">
+            <h3 class="text-lg font-bold text-slate-700 mb-1 text-center">🎮 Pilih Aktiviti</h3>
+
+            <div class="grid grid-cols-5 gap-2 mb-2">
+                <button onclick="loadActivity(1)"
+                    class="btn-3d bg-blue-500 text-white font-bold py-2 px-1 rounded-xl text-xs md:text-sm">🟦<br>Petak
+                    100</button>
+                <button onclick="loadActivity(2)"
+                    class="btn-3d bg-green-500 text-white font-bold py-2 px-1 rounded-xl text-xs md:text-sm">🔍<br>Cari</button>
+                <button onclick="loadActivity(3)"
+                    class="btn-3d bg-purple-500 text-white font-bold py-2 px-1 rounded-xl text-xs md:text-sm">🧮<br>Mesin</button>
+                <button onclick="loadActivity(4)"
+                    class="btn-3d bg-orange-500 text-white font-bold py-2 px-1 rounded-xl text-xs md:text-sm">🔗<br>Padan</button>
+                <button onclick="loadActivity(5)"
+                    class="btn-3d bg-pink-500 text-white font-bold py-2 px-1 rounded-xl text-xs md:text-sm">🧩<br>Corak</button>
+            </div>
+
+            <div class="flex justify-center gap-4 border-t-2 border-slate-100 pt-2">
+                <button onclick="clearActivity()"
+                    class="btn-3d bg-slate-400 text-white font-bold py-1 px-4 rounded-full text-base">🏠 Menu</button>
+                <button onclick="nextActivity()"
+                    class="btn-3d bg-indigo-500 text-white font-bold py-1 px-6 rounded-full text-lg">Seterusnya
+                    ➡️</button>
             </div>
         </div>
     </div>
 
-    <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6 border-2 border-white">
-      <h3 class="text-2xl font-bold text-slate-700 mb-4 text-center">🎮 Pilih Aktiviti</h3>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-        <button onclick="loadActivity(1)" class="btn-3d bg-blue-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🟦 Petak 100</button>
-        <button onclick="loadActivity(2)" class="btn-3d bg-green-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🔍 Cari Saya!</button>
-        <button onclick="loadActivity(3)" class="btn-3d bg-purple-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🧮 Mesin Kira</button>
-        <button onclick="loadActivity(4)" class="btn-3d bg-orange-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🔗 Padankan</button>
-        <button onclick="loadActivity(5)" class="btn-3d bg-pink-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🧩 Corak Nombor</button>
-      </div>
+    <script>
+        /* --- STANDARD HELPERS --- */
+        let currentActivity = 0;
+        let ttsEnabled = false;
+        let currentInfo = "Pilih aktiviti untuk bermula!";
 
-      <div class="flex justify-center gap-4 border-t-2 border-slate-100 pt-6">
-        <button onclick="clearActivity()" class="btn-3d bg-slate-400 text-white font-bold py-2 px-6 rounded-full text-lg">🏠 Menu</button>
-        <button onclick="nextActivity()" class="btn-3d bg-indigo-500 text-white font-bold py-2 px-8 rounded-full text-xl">Seterusnya ➡️</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    /* --- STANDARD HELPERS --- */
-    let currentActivity = 0;
-    let ttsEnabled = false;
-    let currentInfo = "Pilih aktiviti untuk bermula!";
-    
-    // Data Nombor ke Perkataan
-    const numberWords = {
-        "1":"satu","2":"dua","3":"tiga","4":"empat","5":"lima","6":"enam","7":"tujuh","8":"lapan","9":"sembilan","10":"sepuluh",
-        "11":"sebelas","12":"dua belas","13":"tiga belas","14":"empat belas","15":"lima belas","16":"enam belas","17":"tujuh belas","18":"lapan belas","19":"sembilan belas",
-        "20":"dua puluh","30":"tiga puluh","40":"empat puluh","50":"lima puluh","60":"enam puluh","70":"tujuh puluh","80":"lapan puluh","90":"sembilan puluh","100":"seratus"
-    };
-    function toWords(n){
-        if(numberWords[n]) return numberWords[n];
-        if(n<100){
-            const tens = Math.floor(n/10)*10, ones=n%10;
-            return numberWords[String(tens)] + " " + numberWords[String(ones)];
-        }
-        return String(n);
-    }
-
-    function speak(text) { 
-        if (!ttsEnabled || !('speechSynthesis' in window)) return; 
-        window.speechSynthesis.cancel(); 
-        const u = new SpeechSynthesisUtterance(text); u.lang = 'ms-MY'; u.rate = 0.95; u.pitch = 1.05; 
-        const ms = window.speechSynthesis.getVoices().find(v => v.lang === 'ms-MY' || v.lang?.startsWith('ms')); 
-        if (ms) u.voice = ms; 
-        window.speechSynthesis.speak(u); 
-    }
-    
-    function setInfo(text) { 
-        currentInfo = text; const infoEl = document.getElementById('info-text'); 
-        infoEl.style.opacity = 0; setTimeout(() => { infoEl.textContent = text; infoEl.style.opacity = 1; }, 200); 
-    }
-    
-    function speakInfo() { 
-        if (!ttsEnabled) { ttsEnabled = true; document.getElementById('speak-btn').classList.add('bg-green-100', 'text-green-600'); } 
-        speak(currentInfo); 
-    }
-
-    function triggerWin() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-
-    /* --- ROUTER --- */
-    function loadActivity(n) {
-      currentActivity = n;
-      const content = document.getElementById('activity-content');
-      content.style.opacity = 0;
-      setTimeout(() => {
-          if (n === 1) setupAct1(content);
-          else if (n === 2) setupAct2(content);
-          else if (n === 3) setupAct3(content);
-          else if (n === 4) setupAct4(content);
-          else if (n === 5) setupAct5(content);
-          content.style.opacity = 1; 
-      }, 200);
-    }
-
-    function clearActivity() {
-        currentActivity = 0;
-        document.getElementById('activity-content').innerHTML = `<div class="py-10 text-center"><div class="text-8xl mb-6 animate-pulse">💯</div><h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 1-100</h2><p class="text-2xl text-slate-500 mb-8 font-semibold">Pilih butang di bawah.</p></div>`;
-        setInfo("Pilih aktiviti di bawah.");
-    }
-    function nextActivity() { let next = currentActivity + 1; if (next > 5) next = 1; loadActivity(next); }
-
-
-    /* =========================================
-       LOGIK AKTIVITI
-       ========================================= */
-
-    /* --- 1. Petak 100 --- */
-    function setupAct1(content) {
-        setInfo("Klik nombor untuk dengar sebutannya.");
-        
-        let gridHTML = '';
-        for(let i=1; i<=100; i++) {
-            gridHTML += `<div class="cell-100 bg-white" onclick="clickGrid(${i}, this)">${i}</div>`;
+        // Data Nombor ke Perkataan
+        const numberWords = {
+            "1": "satu", "2": "dua", "3": "tiga", "4": "empat", "5": "lima", "6": "enam", "7": "tujuh", "8": "lapan", "9": "sembilan", "10": "sepuluh",
+            "11": "sebelas", "12": "dua belas", "13": "tiga belas", "14": "empat belas", "15": "lima belas", "16": "enam belas", "17": "tujuh belas", "18": "lapan belas", "19": "sembilan belas",
+            "20": "dua puluh", "30": "tiga puluh", "40": "empat puluh", "50": "lima puluh", "60": "enam puluh", "70": "tujuh puluh", "80": "lapan puluh", "90": "sembilan puluh", "100": "seratus"
+        };
+        function toWords(n) {
+            if (numberWords[n]) return numberWords[n];
+            if (n < 100) {
+                const tens = Math.floor(n / 10) * 10, ones = n % 10;
+                return numberWords[String(tens)] + " " + numberWords[String(ones)];
+            }
+            return String(n);
         }
 
-        content.innerHTML = `
-            <div class="w-full max-w-2xl text-center">
-                <h3 class="text-3xl font-bold text-blue-600 mb-4">🟦 Petak 100 Ajaib</h3>
-                <div class="bg-slate-100 p-4 rounded-2xl shadow-inner border-2 border-slate-200 max-h-[400px] overflow-y-auto">
-                    <div class="grid-100">${gridHTML}</div>
+        function speak(text) {
+            if (!ttsEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text); u.lang = 'ms-MY'; u.rate = 0.95; u.pitch = 1.05;
+            const ms = window.speechSynthesis.getVoices().find(v => v.lang === 'ms-MY' || v.lang?.startsWith('ms'));
+            if (ms) u.voice = ms;
+            window.speechSynthesis.speak(u);
+        }
+
+        function setInfo(text) {
+            currentInfo = text; const infoEl = document.getElementById('info-text');
+            infoEl.style.opacity = 0; setTimeout(() => { infoEl.textContent = text; infoEl.style.opacity = 1; }, 200);
+        }
+
+        function speakInfo() {
+            if (!ttsEnabled) { ttsEnabled = true; document.getElementById('speak-btn').classList.add('bg-green-100', 'text-green-600'); }
+            speak(currentInfo);
+        }
+
+        function triggerWin() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
+
+        /* --- ROUTER --- */
+        function loadActivity(n) {
+            currentActivity = n;
+            const content = document.getElementById('activity-content');
+            content.style.opacity = 0;
+            setTimeout(() => {
+                if (n === 1) setupAct1(content);
+                else if (n === 2) setupAct2(content);
+                else if (n === 3) setupAct3(content);
+                else if (n === 4) setupAct4(content);
+                else if (n === 5) setupAct5(content);
+                content.style.opacity = 1;
+            }, 200);
+        }
+
+        function clearActivity() {
+            currentActivity = 0;
+            document.getElementById('activity-content').innerHTML = `<div class="py-10 text-center"><div class="text-8xl mb-6 animate-pulse">💯</div><h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 1-100</h2><p class="text-2xl text-slate-500 mb-8 font-semibold">Pilih butang di bawah.</p></div>`;
+            setInfo("Pilih aktiviti di bawah.");
+        }
+        function nextActivity() { let next = currentActivity + 1; if (next > 5) next = 1; loadActivity(next); }
+
+
+        /* =========================================
+           LOGIK AKTIVITI
+           ========================================= */
+
+        /* --- 1. Petak 100 --- */
+        function setupAct1(content) {
+            setInfo("Klik nombor untuk dengar sebutannya.");
+
+            let gridHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                gridHTML += `<div class="cell-100 bg-white" onclick="clickGrid(${i}, this)">${i}</div>`;
+            }
+
+            content.innerHTML = `
+            <div class="w-full max-w-2xl text-center flex flex-col h-full overflow-hidden">
+                <h3 class="text-2xl font-bold text-blue-600 mb-2 flex-none">🟦 Petak 100 Ajaib</h3>
+                <div class="bg-slate-100 p-2 rounded-2xl shadow-inner border-2 border-slate-200 flex-1 min-h-0 overflow-y-auto">
+                    <div class="grid-100 pb-4">${gridHTML}</div>
                 </div>
             </div>
         `;
-    }
-    window.clickGrid = function(n, el) {
-        document.querySelectorAll('.cell-100.selected').forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-        const word = toWords(n);
-        setInfo(`Nombor ${n}: "${word}"`);
-        speak(word);
-    }
-
-    /* --- 2. Cari Saya! --- */
-    let targetNum = 0;
-    function setupAct2(content) {
-        setInfo("Tekan 'Dengar Arahan' kemudian cari nombornya.");
-        targetNum = 0;
-        
-        let gridHTML = '';
-        for(let i=1; i<=100; i++) {
-            gridHTML += `<div class="cell-100 bg-white hover:bg-green-100" onclick="checkFind(${i}, this)">${i}</div>`;
+        }
+        window.clickGrid = function (n, el) {
+            document.querySelectorAll('.cell-100.selected').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            const word = toWords(n);
+            setInfo(`Nombor ${n}: "${word}"`);
+            speak(word);
         }
 
-        content.innerHTML = `
-            <div class="w-full max-w-2xl text-center">
-                <h3 class="text-3xl font-bold text-green-600 mb-4">🔍 Cari Saya!</h3>
-                <button onclick="playQuestion()" class="btn-3d bg-green-500 text-white px-8 py-2 rounded-xl font-bold text-xl mb-4">
+        /* --- 2. Cari Saya! --- */
+        let targetNum = 0;
+        function setupAct2(content) {
+            setInfo("Tekan 'Dengar Arahan' kemudian cari nombornya.");
+            targetNum = 0;
+
+            let gridHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                gridHTML += `<div class="cell-100 bg-white hover:bg-green-100" onclick="checkFind(${i}, this)">${i}</div>`;
+            }
+
+            content.innerHTML = `
+            <div class="w-full max-w-2xl text-center flex flex-col h-full overflow-hidden">
+                <h3 class="text-2xl font-bold text-green-600 mb-2 flex-none">🔍 Cari Saya!</h3>
+                <button onclick="playQuestion()" class="btn-3d bg-green-500 text-white px-6 py-1 rounded-xl font-bold text-lg mb-2 flex-none mx-auto">
                     🔊 Dengar Arahan
                 </button>
-                <div class="bg-green-50 p-4 rounded-2xl shadow-inner border-2 border-green-200 max-h-[380px] overflow-y-auto">
-                    <div class="grid-100">${gridHTML}</div>
+                <div class="bg-green-50 p-2 rounded-2xl shadow-inner border-2 border-green-200 flex-1 min-h-0 overflow-y-auto">
+                    <div class="grid-100 pb-4">${gridHTML}</div>
                 </div>
             </div>
         `;
-    }
-    window.playQuestion = function() {
-        targetNum = Math.floor(Math.random() * 100) + 1;
-        const msg = `Cari nombor... ${toWords(targetNum)}.`;
-        setInfo(msg); speak(msg);
-        // Reset grid visuals
-        document.querySelectorAll('.cell-100').forEach(c => c.classList.remove('correct', 'selected', 'bg-red-200'));
-    }
-    window.checkFind = function(n, el) {
-        if(targetNum === 0) { setInfo("Sila tekan butang Dengar Arahan dahulu."); return; }
-        
-        if(n === targetNum) {
-            el.classList.add('correct');
-            speak("Betul!"); triggerWin();
-            setInfo(`Tahniah! Itu nombor ${n}.`);
-            targetNum = 0; 
-        } else {
-            el.classList.add('bg-red-200');
-            speak("Bukan.");
         }
-    }
+        window.playQuestion = function () {
+            targetNum = Math.floor(Math.random() * 100) + 1;
+            const msg = `Cari nombor... ${toWords(targetNum)}.`;
+            setInfo(msg); speak(msg);
+            // Reset grid visuals
+            document.querySelectorAll('.cell-100').forEach(c => c.classList.remove('correct', 'selected', 'bg-red-200'));
+        }
+        window.checkFind = function (n, el) {
+            if (targetNum === 0) { setInfo("Sila tekan butang Dengar Arahan dahulu."); return; }
 
-    /* --- 3. Mesin Kira (Kumpulan) --- */
-    let currentCount = 0;
-    const targetCount = 43;
-    
-    function setupAct3(content) {
-        setInfo(`Kira sehingga ${targetCount} menggunakan butang tambah.`);
-        currentCount = 0;
-        
-        content.innerHTML = `
-            <div class="w-full max-w-4xl text-center">
-                <h3 class="text-3xl font-bold text-purple-600 mb-6">🧮 Mesin Kira Kumpulan</h3>
+            if (n === targetNum) {
+                el.classList.add('correct');
+                speak("Betul!"); triggerWin();
+                setInfo(`Tahniah! Itu nombor ${n}.`);
+                targetNum = 0;
+            } else {
+                el.classList.add('bg-red-200');
+                speak("Bukan.");
+            }
+        }
+
+        /* --- 3. Mesin Kira (Kumpulan) --- */
+        let currentCount = 0;
+        const targetCount = 43;
+
+        function setupAct3(content) {
+            setInfo(`Kira sehingga ${targetCount} menggunakan butang tambah.`);
+            currentCount = 0;
+
+            content.innerHTML = `
+            <div class="w-full max-w-4xl text-center flex flex-col h-full justify-center">
+                <h3 class="text-2xl font-bold text-purple-600 mb-4">🧮 Mesin Kira Kumpulan</h3>
                 
-                <div class="flex flex-col items-center mb-8">
-                    <div class="text-xl text-slate-500 mb-2">Sasaran: <span class="font-bold text-purple-700">${targetCount}</span></div>
-                    <div id="counter-display" class="text-8xl font-black text-purple-800 bg-purple-50 px-8 py-4 rounded-3xl border-4 border-purple-200 shadow-lg">0</div>
+                <div class="flex flex-col items-center mb-6">
+                    <div class="text-lg text-slate-500 mb-1">Sasaran: <span class="font-bold text-purple-700">${targetCount}</span></div>
+                    <div id="counter-display" class="text-7xl font-black text-purple-800 bg-purple-50 px-6 py-2 rounded-3xl border-4 border-purple-200 shadow-lg">0</div>
                 </div>
 
-                <div class="flex justify-center gap-4 mb-6">
-                    <button onclick="addCount(10)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-6 py-4 rounded-xl text-2xl font-bold">+10</button>
-                    <button onclick="addCount(5)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-6 py-4 rounded-xl text-2xl font-bold">+5</button>
-                    <button onclick="addCount(1)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-6 py-4 rounded-xl text-2xl font-bold">+1</button>
+                <div class="flex justify-center gap-3 mb-6">
+                    <button onclick="addCount(10)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-4 py-3 rounded-xl text-xl font-bold">+10</button>
+                    <button onclick="addCount(5)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-4 py-3 rounded-xl text-xl font-bold">+5</button>
+                    <button onclick="addCount(1)" class="btn-3d bg-purple-100 text-purple-900 border-purple-300 px-4 py-3 rounded-xl text-xl font-bold">+1</button>
                 </div>
                 
-                <button onclick="resetCount()" class="text-slate-400 font-bold hover:text-slate-600 underline">Mula Semula</button>
+                <button onclick="resetCount()" class="text-slate-400 font-bold hover:text-slate-600 underline text-sm">Mula Semula</button>
             </div>
         `;
-    }
-    window.addCount = function(val) {
-        if(currentCount >= targetCount) return;
-        
-        currentCount += val;
-        const display = document.getElementById('counter-display');
-        display.innerText = currentCount;
-        
-        display.classList.remove('pop-in');
-        void display.offsetWidth; 
-        display.classList.add('pop-in');
-        
-        if(currentCount === targetCount) {
-            display.classList.add('text-green-600');
-            setInfo("Tahniah! Sasaran tercapai."); speak("Tahniah!"); triggerWin();
-        } else if(currentCount > targetCount) {
-            display.classList.add('text-red-600');
-            setInfo("Terlebih! Cuba mula semula."); speak("Terlebih.");
-        } else {
-            speak(currentCount);
         }
-    }
-    window.resetCount = function() {
-        setupAct3(document.getElementById('activity-content'));
-    }
+        window.addCount = function (val) {
+            if (currentCount >= targetCount) return;
 
-    /* --- 4. Padankan (Dengan Bimbingan) --- */
-    let selNum = null;
-    let guideMode = true;
-    
-    function setupAct4(content) {
-        setInfo("Pilih nombor, kemudian pilih gambar yang sepadan.");
-        selNum = null;
-        guideMode = true;
-        
-        const pairs = [
-            {n:15, box:1, apple:5}, {n:31, box:3, apple:1}, {n:23, box:2, apple:3}
-        ];
+            currentCount += val;
+            const display = document.getElementById('counter-display');
+            display.innerText = currentCount;
 
-        content.innerHTML = `
-            <div class="w-full max-w-5xl text-center">
-                <h3 class="text-3xl font-bold text-orange-600 mb-4">🔗 Padankan (Nilai Tempat)</h3>
+            display.classList.remove('pop-in');
+            void display.offsetWidth;
+            display.classList.add('pop-in');
+
+            if (currentCount === targetCount) {
+                display.classList.add('text-green-600');
+                setInfo("Tahniah! Sasaran tercapai."); speak("Tahniah!"); triggerWin();
+            } else if (currentCount > targetCount) {
+                display.classList.add('text-red-600');
+                setInfo("Terlebih! Cuba mula semula."); speak("Terlebih.");
+            } else {
+                speak(currentCount);
+            }
+        }
+        window.resetCount = function () {
+            setupAct3(document.getElementById('activity-content'));
+        }
+
+        /* --- 4. Padankan (Dengan Bimbingan) --- */
+        let selNum = null;
+        let guideMode = true;
+
+        function setupAct4(content) {
+            setInfo("Pilih nombor, kemudian pilih gambar yang sepadan.");
+            selNum = null;
+            guideMode = true;
+
+            const pairs = [
+                { n: 15, box: 1, apple: 5 }, { n: 31, box: 3, apple: 1 }, { n: 23, box: 2, apple: 3 }
+            ];
+
+            content.innerHTML = `
+            <div class="w-full max-w-5xl text-center flex flex-col h-full overflow-y-auto">
+                <h3 class="text-2xl font-bold text-orange-600 mb-2 flex-none">🔗 Padankan (Nilai Tempat)</h3>
                 
-                <div class="flex justify-center items-center gap-2 mb-6">
-                    <span class="text-sm font-bold text-slate-500">Panduan: 📦=10, 🍎=1</span>
-                    <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input type="checkbox" name="toggle" id="guide-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked onclick="toggleGuide()"/>
-                        <label for="guide-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-green-300 cursor-pointer"></label>
+                <div class="flex justify-center items-center gap-2 mb-4 flex-none">
+                    <span class="text-xs font-bold text-slate-500">Panduan: 📦=10, 🍎=1</span>
+                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="toggle" id="guide-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" checked onclick="toggleGuide()"/>
+                        <label for="guide-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-green-300 cursor-pointer"></label>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="flex flex-col gap-4">
-                        <h4 class="font-bold text-orange-800">Nombor</h4>
+                <div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+                    <div class="flex flex-col gap-2">
+                        <h4 class="font-bold text-orange-800 text-sm">Nombor</h4>
                         ${pairs.map(p => `
-                            <button onclick="selectNum(${p.n}, this)" class="num-btn btn-3d bg-white border-orange-200 text-orange-900 p-4 rounded-xl text-3xl font-bold">
+                            <button onclick="selectNum(${p.n}, this)" class="num-btn btn-3d bg-white border-orange-200 text-orange-900 p-2 rounded-xl text-2xl font-bold">
                                 ${p.n}
                             </button>
                         `).join('')}
                     </div>
-                    <div class="flex flex-col gap-4">
-                        <h4 class="font-bold text-slate-600">Gambar Rajah</h4>
-                        ${pairs.sort(()=>Math.random()-0.5).map(p => `
-                            <button onclick="selectViz(${p.n}, this)" class="viz-btn btn-3d bg-white border-slate-200 p-4 rounded-xl flex items-center justify-center gap-2 min-h-[80px]">
-                                <div class="flex gap-1">${'📦'.repeat(p.box)}</div>
-                                <div class="w-px h-8 bg-slate-300"></div>
-                                <div class="flex gap-1">${'🍎'.repeat(p.apple)}</div>
-                                <div class="hint-text ml-2 text-xs font-bold bg-green-100 text-green-800 px-2 py-1 rounded ${guideMode?'':'hidden'}">= ${p.n}</div>
+                    <div class="flex flex-col gap-2">
+                        <h4 class="font-bold text-slate-600 text-sm">Gambar Rajah</h4>
+                        ${pairs.sort(() => Math.random() - 0.5).map(p => `
+                            <button onclick="selectViz(${p.n}, this)" class="viz-btn btn-3d bg-white border-slate-200 p-2 rounded-xl flex items-center justify-center gap-1 min-h-[60px]">
+                                <div class="flex gap-0.5 transform scale-75 origin-right">${'📦'.repeat(p.box)}</div>
+                                <div class="w-px h-6 bg-slate-300 mx-1"></div>
+                                <div class="flex gap-0.5 transform scale-75 origin-left">${'🍎'.repeat(p.apple)}</div>
+                                <div class="hint-text ml-1 text-[10px] font-bold bg-green-100 text-green-800 px-1 py-0.5 rounded ${guideMode ? '' : 'hidden'}">= ${p.n}</div>
                             </button>
                         `).join('')}
                     </div>
                 </div>
             </div>
         `;
-    }
-    
-    window.toggleGuide = function() {
-        guideMode = !guideMode;
-        document.querySelectorAll('.hint-text').forEach(el => {
-            if(guideMode) el.classList.remove('hidden');
-            else el.classList.add('hidden');
-        });
-    }
-    
-    window.selectNum = function(n, btn) {
-        document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('bg-orange-200', 'border-orange-400'));
-        if(!btn.disabled) {
-            btn.classList.add('bg-orange-200', 'border-orange-400');
-            selNum = { n, btn };
-            speak(toWords(n));
         }
-    }
-    
-    window.selectViz = function(n, btn) {
-        if(!selNum) { setInfo("Pilih nombor di kiri dahulu."); return; }
-        
-        if(n === selNum.n) {
-            btn.classList.remove('bg-white'); btn.classList.add('bg-green-100', 'border-green-400');
-            selNum.btn.classList.remove('bg-white', 'bg-orange-200'); selNum.btn.classList.add('bg-green-100', 'border-green-400');
-            
-            btn.disabled = true; selNum.btn.disabled = true;
-            selNum = null;
-            
-            speak("Betul! Padan."); triggerWin();
-        } else {
-            btn.classList.add('shake', 'bg-red-100');
-            setTimeout(()=>btn.classList.remove('shake', 'bg-red-100'), 500);
-            speak("Salah.");
+
+        window.toggleGuide = function () {
+            guideMode = !guideMode;
+            document.querySelectorAll('.hint-text').forEach(el => {
+                if (guideMode) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
         }
-    }
 
-    /* --- 5. Corak Nombor --- */
-    let selAns = null;
-    function setupAct5(content) {
-        setInfo("Pilih jawapan di bawah, kemudian isi tempat kosong '?'.");
-        selAns = null;
-        
-        const pattern = ["14", "?", "16", "17", "24", "25", "?", "27", "?", "35", "36", "37"];
-        const answers = ["15", "26", "34"];
-        const correctMap = { 1: "15", 6: "26", 8: "34" }; // Index to answer
+        window.selectNum = function (n, btn) {
+            document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('bg-orange-200', 'border-orange-400'));
+            if (!btn.disabled) {
+                btn.classList.add('bg-orange-200', 'border-orange-400');
+                selNum = { n, btn };
+                speak(toWords(n));
+            }
+        }
 
-        content.innerHTML = `
-            <div class="w-full max-w-4xl text-center">
-                <h3 class="text-3xl font-bold text-pink-600 mb-6">🧩 Lengkapkan Corak</h3>
+        window.selectViz = function (n, btn) {
+            if (!selNum) { setInfo("Pilih nombor di kiri dahulu."); return; }
+
+            if (n === selNum.n) {
+                btn.classList.remove('bg-white'); btn.classList.add('bg-green-100', 'border-green-400');
+                selNum.btn.classList.remove('bg-white', 'bg-orange-200'); selNum.btn.classList.add('bg-green-100', 'border-green-400');
+
+                btn.disabled = true; selNum.btn.disabled = true;
+                selNum = null;
+
+                speak("Betul! Padan."); triggerWin();
+            } else {
+                btn.classList.add('shake', 'bg-red-100');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100'), 500);
+                speak("Salah.");
+            }
+        }
+
+        /* --- 5. Corak Nombor --- */
+        let selAns = null;
+        function setupAct5(content) {
+            setInfo("Pilih jawapan di bawah, kemudian isi tempat kosong '?'.");
+            selAns = null;
+
+            const pattern = ["14", "?", "16", "17", "24", "25", "?", "27", "?", "35", "36", "37"];
+            const answers = ["15", "26", "34"];
+            const correctMap = { 1: "15", 6: "26", 8: "34" }; // Index to answer
+
+            content.innerHTML = `
+            <div class="w-full max-w-4xl text-center flex flex-col h-full justify-center">
+                <h3 class="text-2xl font-bold text-pink-600 mb-4">🧩 Lengkapkan Corak</h3>
                 
-                <div class="grid grid-cols-4 gap-3 mb-8 max-w-lg mx-auto">
+                <div class="grid grid-cols-4 gap-2 mb-6 max-w-lg mx-auto">
                     ${pattern.map((val, i) => {
-                        if(val === "?") return `<button onclick="fillSlot(${i}, this)" class="slot-btn btn-3d bg-pink-50 border-pink-300 text-pink-400 font-bold text-2xl py-4 rounded-xl">?</button>`;
-                        return `<div class="bg-gray-100 text-gray-500 font-bold text-2xl py-4 rounded-xl border-2 border-gray-200">${val}</div>`;
-                    }).join('')}
+                if (val === "?") return `<button onclick="fillSlot(${i}, this)" class="slot-btn btn-3d bg-pink-50 border-pink-300 text-pink-400 font-bold text-xl py-3 rounded-xl">?</button>`;
+                return `<div class="bg-gray-100 text-gray-500 font-bold text-xl py-3 rounded-xl border-2 border-gray-200">${val}</div>`;
+            }).join('')}
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 inline-block">
-                    <div class="text-slate-400 text-sm mb-2 font-bold">PILIHAN JAWAPAN</div>
-                    <div class="flex gap-4 justify-center">
+                <div class="bg-white p-3 rounded-2xl border-2 border-slate-200 inline-block">
+                    <div class="text-slate-400 text-xs mb-2 font-bold">PILIHAN JAWAPAN</div>
+                    <div class="flex gap-3 justify-center">
                         ${answers.map(a => `
-                            <button onclick="pickAns('${a}', this)" class="ans-btn btn-3d bg-yellow-100 text-yellow-800 border-yellow-300 font-bold text-2xl py-3 px-6 rounded-xl">
+                            <button onclick="pickAns('${a}', this)" class="ans-btn btn-3d bg-yellow-100 text-yellow-800 border-yellow-300 font-bold text-xl py-2 px-4 rounded-xl">
                                 ${a}
                             </button>
                         `).join('')}
@@ -416,46 +487,47 @@
                 </div>
             </div>
         `;
-        
-        // Store correct map in window for access
-        window.patternMap = correctMap;
-    }
-    
-    window.pickAns = function(val, btn) {
-        document.querySelectorAll('.ans-btn').forEach(b => b.classList.remove('ring-4', 'ring-yellow-400'));
-        if(!btn.classList.contains('opacity-0')) {
-            btn.classList.add('ring-4', 'ring-yellow-400');
-            selAns = { val, btn };
-            speak(val);
-        }
-    }
-    
-    window.fillSlot = function(idx, btn) {
-        if(!selAns) { setInfo("Sila pilih jawapan di bawah dahulu."); return; }
-        
-        const correct = window.patternMap[idx];
-        if(selAns.val === correct) {
-            btn.innerText = selAns.val;
-            btn.classList.remove('bg-pink-50', 'text-pink-400', 'border-pink-300');
-            btn.classList.add('bg-green-100', 'text-green-800', 'border-green-400', 'pop-in');
-            btn.disabled = true;
-            
-            // Hide used answer
-            selAns.btn.classList.add('opacity-0', 'pointer-events-none');
-            selAns.btn.classList.remove('ring-4');
-            selAns = null;
-            
-            speak("Betul!");
-            
-            // Check win
-            if(document.querySelectorAll('.slot-btn:disabled').length === 3) triggerWin();
-        } else {
-            btn.classList.add('shake', 'bg-red-100');
-            setTimeout(()=>btn.classList.remove('shake', 'bg-red-100'), 500);
-            speak("Salah tempat.");
-        }
-    }
 
-  </script>
+            // Store correct map in window for access
+            window.patternMap = correctMap;
+        }
+
+        window.pickAns = function (val, btn) {
+            document.querySelectorAll('.ans-btn').forEach(b => b.classList.remove('ring-4', 'ring-yellow-400'));
+            if (!btn.classList.contains('opacity-0')) {
+                btn.classList.add('ring-4', 'ring-yellow-400');
+                selAns = { val, btn };
+                speak(val);
+            }
+        }
+
+        window.fillSlot = function (idx, btn) {
+            if (!selAns) { setInfo("Sila pilih jawapan di bawah dahulu."); return; }
+
+            const correct = window.patternMap[idx];
+            if (selAns.val === correct) {
+                btn.innerText = selAns.val;
+                btn.classList.remove('bg-pink-50', 'text-pink-400', 'border-pink-300');
+                btn.classList.add('bg-green-100', 'text-green-800', 'border-green-400', 'pop-in');
+                btn.disabled = true;
+
+                // Hide used answer
+                selAns.btn.classList.add('opacity-0', 'pointer-events-none');
+                selAns.btn.classList.remove('ring-4');
+                selAns = null;
+
+                speak("Betul!");
+
+                // Check win
+                if (document.querySelectorAll('.slot-btn:disabled').length === 3) triggerWin();
+            } else {
+                btn.classList.add('shake', 'bg-red-100');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100'), 500);
+                speak("Salah tempat.");
+            }
+        }
+
+    </script>
 </body>
+
 </html>
